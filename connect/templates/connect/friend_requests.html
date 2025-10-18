@@ -1,0 +1,18 @@
+{% extends "connect/layout.html" %}
+
+{% block title %}Friend Requests{% endblock %}
+
+{% block content %}
+<h2>Friend Requests</h2>
+<ul>
+    {% for fr in requests %}
+        <li>
+            {{ fr.from_user.username }}
+            <a href="{% url 'accept_friend_request' fr.id %}">Accept</a>
+        </li>
+    {% empty %}
+        <li>No friend requests.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
+

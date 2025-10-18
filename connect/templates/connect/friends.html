@@ -1,0 +1,77 @@
+{% extends 'connect/layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <h2 class="mb-4 text-center">Friends</h2>
+
+  <!-- Incoming Friend Requests -->
+  {% if incoming_requests %}
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-light">
+        <h5 class="mb-0">Incoming Friend Requests</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for req in incoming_requests %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ req.from_user.username }}</span>
+            <div>
+              <a href="{% url 'accept_friend_request' req.id %}" class="btn btn-success btn-sm me-2">Accept</a>
+              <a href="{% url 'decline_friend_request' req.id %}" class="btn btn-danger btn-sm">Decline</a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <p class="text-muted">No incoming friend requests.</p>
+  {% endif %}
+
+  <!-- Friends List -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">Your Friends</h5>
+    </div>
+    {% if friends %}
+      <ul class="list-group list-group-flush">
+        {% for friend in friends %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ friend.username }}</span>
+            <a href="{% url 'unfriend' friend.id %}" class="btn btn-outline-danger btn-sm">Unfriend</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="p-3 text-muted mb-0">You don’t have any friends yet.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+const userSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/friends/'
+);
+
+userSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    switch(data.action) {
+        case 'received_request':
+            alert(`New friend request from ${data.from_user}`);
+            break;
+        case 'request_accepted':
+            alert(`${data.by_user} accepted your friend request!`);
+            break;
+        case 'accepted_request':
+            alert(`You are now friends with ${data.by_user}`);
+            break;
+        case 'unfriended':
+            alert(`${data.by_user} unfriended you`);
+            break;
+    }
+    location.reload(); // or dynamically update the DOM
+};
+</script>
+
+
+{% endblock %}

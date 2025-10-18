@@ -1,0 +1,7 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.feed_view, name='feed_view'),
+    path('create/', views.create_activity, name='create_activity'),
+]
