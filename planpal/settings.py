@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'connect',
     'users',
     'channels',
-    'feed',
 ]
 
 # Use Channels as ASGI application
